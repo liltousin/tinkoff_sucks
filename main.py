@@ -65,8 +65,6 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
                 print(word)
         print('Лучшее слово:', best_word)
 
-        print(in_var, not_in_var, pos_var, not_pos_var)
-
         in_var += input(
             'Буквы которые не на позиции, но есть в слове '
             '(слитно, без пробелов): '
