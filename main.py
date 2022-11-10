@@ -65,13 +65,14 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
                 print(word)
         print('Лучшее слово:', best_word)
 
-        in_var += input(
-            'Буквы которые не на позиции, но есть в слове '
-            '(слитно, без пробелов): '
-        )
         not_in_var += input(
             'Буквы которых нет в слове (слитно, без пробелов): '
         )
+        in_not_pos = input(
+                        'Введите буквы которые стоят не на своих местах '
+                        '(пример: "аб**а"): '
+        )
+        in_var += in_not_pos.replace('*', '')
         pos_var += list(
             filter(
                 lambda x: x[1] != '*',
@@ -87,10 +88,7 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
             filter(
                 lambda x: x[1] != '*',
                 enumerate(
-                    input(
-                        'Введите буквы которые стоят не на своих местах '
-                        '(пример: "аб**а"): '
-                    )
+                    in_not_pos
                 ),
             )
         )
