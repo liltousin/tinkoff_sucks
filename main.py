@@ -31,8 +31,9 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
     all_words = {}
     for word in filtered_words:
         counter = 0
-        for c in list(set(word)):
-            counter += all_chars[c]
+        for c in word:
+            cc = word.count(c)
+            counter += all_chars[c] / cc * sum(1 / 2**(n-1) for n in range(1, cc + 1))
         all_words[word] = counter
     most_best_words = sorted(
         [(k, v) for k, v in all_words.items()],
