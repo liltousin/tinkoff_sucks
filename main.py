@@ -63,7 +63,7 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
             ):
                 if not best_word:
                     best_word = word
-                print(word)
+                print(f'{word}: {weight}')
         print('Лучшее слово:', best_word)
 
         not_in_var += input(
