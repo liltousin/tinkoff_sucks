@@ -16,6 +16,13 @@ def checker(d: dict, word):
     return True
 
 
+def check_var_in_pos(var, pos_var):
+    for p, v in pos_var:
+        if var == v:
+            return p
+    return False
+
+
 with open('russian_nouns.txt', 'r', encoding='utf8') as f:
     words = [word.rstrip() for word in f.readlines()]
     filtered_words = list(
@@ -33,7 +40,11 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
         counter = 0
         for c in word:
             cc = word.count(c)
-            counter += all_chars[c] / cc * sum(1 / 2**(n-1) for n in range(1, cc + 1))
+            counter += (
+                all_chars[c]
+                / cc
+                * sum(1 / 2 ** (n - 1) for n in range(1, cc + 1))
+            )
         all_words[word] = counter
     most_best_words = sorted(
         [(k, v) for k, v in all_words.items()],
@@ -46,7 +57,11 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
     pos_var = []
     not_pos_var = []
 
-    for _ in range(6):
+    result = ''
+
+    first_time = True
+
+    while result != 'жжжжж':
 
         best_word = ''
 
@@ -64,32 +79,49 @@ with open('russian_nouns.txt', 'r', encoding='utf8') as f:
                 if not best_word:
                     best_word = word
                 print(f'{word}: {weight}')
-        print('Лучшее слово:', best_word)
+        if best_word:
+            print('Лучшее слово:', best_word)
+        else:
+            print('Ошибка, нет таких слов!')
+            break
 
-        not_in_var += input(
-            'Буквы которых нет в слове (слитно, без пробелов): '
-        )
-        in_not_pos = input(
-                        'Введите буквы которые стоят не на своих местах '
-                        '(пример: "аб**а"): '
-        )
-        in_var += in_not_pos.replace('*', '')
-        pos_var += list(
-            filter(
-                lambda x: x[1] != '*',
-                enumerate(
-                    input(
-                        'Введите буквы которые стоят на своих местах '
-                        '(пример: "аб**а"): '
+        data = input(
+            'Введите результаты и введенное слово'
+            + (
+                ' (по умлочанию лучшее слово, '
+                'пример: "жжбсб посол" или просто "жжбсб")'
+                if first_time
+                else ''
+            )
+            + ': '
+        ).split()
+
+        first_time = False
+
+        if len(data) == 2:
+            selected_word = data[1]
+            if selected_word == '':
+                selected_word = best_word
+        else:
+            selected_word = best_word
+        result = data[0]
+
+        if len(result) != 5 or len(selected_word) != 5:
+            raise ValueError
+
+        for p, c in enumerate(result):
+            i = selected_word[p]
+            if c == 'с':
+                if pos := check_var_in_pos(i, pos_var):
+                    not_pos_var += list(
+                        filter(lambda x: x[0] != pos, enumerate(i * 5))
                     )
-                ),
-            )
-        )
-        not_pos_var += list(
-            filter(
-                lambda x: x[1] != '*',
-                enumerate(
-                    in_not_pos
-                ),
-            )
-        )
+                else:
+                    not_in_var += i
+            elif c == 'б':
+                in_var += i
+                not_pos_var += [(p, i)]
+            elif c == 'ж':
+                pos_var += [(p, i)]
+            else:
+                raise ValueError
